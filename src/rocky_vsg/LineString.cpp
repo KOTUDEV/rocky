@@ -4,105 +4,82 @@
  * MIT License
  */
 #include "LineString.h"
+#include "engine/LineSystem.h"
 #include "json.h"
+#include <vsg/nodes/CullNode.h>
+#include <vsg/utils/ComputeBounds.h>
 #include <vsg/nodes/DepthSorted.h>
+#include <vsg/nodes/StateGroup.h>
 
 using namespace ROCKY_NAMESPACE;
 
-LineString::LineString() :
-    super()
+MultiLineString::MultiLineString()
 {
-    _geometry = LineStringGeometry::create();
-    _bindStyle = BindLineStyle::create();
+    bindCommand = BindLineDescriptors::create();
 }
 
 void
-LineString::setStyle(const LineStyle& value)
+MultiLineString::dirty()
 {
-    _bindStyle->setStyle(value);
-}
-
-const LineStyle&
-LineString::style() const
-{
-    return _bindStyle->style();
-}
-
-void
-LineString::createNode(Runtime& runtime)
-{
-    // TODO: simple approach. Just put everything in every LineString for now.
-    // We can optimize or group things later.
-    if (!node)
+    if (bindCommand)
     {
-        ROCKY_HARD_ASSERT(LineState::status.ok());
-        auto stateGroup = vsg::StateGroup::create();
-        stateGroup->stateCommands = LineState::pipelineStateCommands;
-        stateGroup->addChild(_bindStyle);
-        stateGroup->addChild(_geometry);
-        auto sw = vsg::Switch::create();
-        sw->addChild(true, stateGroup);
-        node = sw;
+        // update the UBO with the new style data.
+        if (style.has_value())
+        {
+            bindCommand->updateStyle(style.value());
+        }
     }
 }
 
-JSON
-LineString::to_json() const
-{
-    ROCKY_SOFT_ASSERT(false, "Not yet implemented");
-    auto j = json::object();
-    set(j, "name", name);
-    return j.dump();
-}
-
-
-
-MultiLineString::MultiLineString() :
-    super()
-{
-    _bindStyle = BindLineStyle::create();
-}
-
 void
-MultiLineString::setStyle(const LineStyle& value)
+MultiLineString::initializeNode(const ECS::VSG_ComponentParams& params)
 {
-    _bindStyle->setStyle(value);
-}
+    auto cull = vsg::CullNode::create();
 
-const LineStyle&
-MultiLineString::style() const
-{
-    return _bindStyle->style();
-}
-
-void
-MultiLineString::createNode(Runtime& runtime)
-{
-    // TODO: simple approach. Just put everything in every LineString for now.
-    // We can optimize or group things later.
-    if (!node)
+    if (style.has_value())
     {
-        ROCKY_HARD_ASSERT(LineState::status.ok());
+        bindCommand = BindLineDescriptors::create();
+        dirty();
+        bindCommand->init(params.layout);
 
-        auto stateGroup = vsg::StateGroup::create();
-        stateGroup->stateCommands = LineState::pipelineStateCommands;
-        
-        stateGroup->addChild(_bindStyle);
-
-        for (auto& geom : _geometries)
-            stateGroup->addChild(geom);
-
-        auto sw = vsg::Switch::create();
-        sw->addChild(true, stateGroup);
-        node = sw;
+        auto sg = vsg::StateGroup::create();
+        sg->stateCommands.push_back(bindCommand);
+        for (auto& g : geometries)
+            sg->addChild(g);
+        cull->child = sg;
     }
+    else if (geometries.size() == 1)
+    {
+        cull->child = geometries[0];
+    }
+    else
+    {
+        auto group = vsg::Group::create();
+        for (auto& g : geometries)
+            group->addChild(g);
+        cull->child = group;
+    }
+
+    vsg::ComputeBounds cb;
+    cull->child->accept(cb);
+    cull->bound.set((cb.bounds.min + cb.bounds.max) * 0.5, vsg::length(cb.bounds.min - cb.bounds.max) * 0.5);
+
+    node = cull;
+}
+
+int
+MultiLineString::featureMask() const
+{
+    return LineSystem::featureMask(*this);
 }
 
 JSON
 MultiLineString::to_json() const
 {
     ROCKY_SOFT_ASSERT(false, "Not yet implemented");
-    auto j = json::object();
-    set(j, "name", name);
+
+    auto j = json::parse(ECS::Component::to_json());
+    // todo
     return j.dump();
 }
+

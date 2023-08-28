@@ -6,8 +6,8 @@
 #pragma once
 #include <rocky_vsg/InstanceVSG.h>
 #include <rocky_vsg/MapNode.h>
-#include <rocky_vsg/MapObject.h>
 #include <rocky_vsg/SkyNode.h>
+#include <rocky_vsg/ECS.h>
 
 #include <vsg/app/Viewer.h>
 #include <vsg/app/Window.h>
@@ -38,13 +38,10 @@ namespace ROCKY_NAMESPACE
         //! @return Pointer to the map
         std::shared_ptr<Map> map();
 
-        //! Add a map object to the scene
-        //! @param object Map object to add to the scene
-        void add(std::shared_ptr<MapObject> object);
-
-        //! Remove a map object from the scene
-        //! @param object Map object to remove from the scene
-        void remove(std::shared_ptr<MapObject> object);
+        //! Entities
+        ECS::Entities& entities() {
+            return ecs->registry;
+        }
 
         //! Process and render one frame. If you call run(), this will
         //! happen automatically in a continuous loop.
@@ -118,6 +115,7 @@ namespace ROCKY_NAMESPACE
         vsg::ref_ptr<vsg::Viewer> viewer;
         vsg::ref_ptr<vsg::Group> root;
         vsg::ref_ptr<vsg::Group> mainScene;
+        vsg::ref_ptr<ECS::ECSNode> ecs;
         std::function<void()> updateFunction;
         DisplayConfiguration displayConfiguration;
 
@@ -161,9 +159,6 @@ namespace ROCKY_NAMESPACE
 
         void realize();
 
-        std::mutex _add_remove_mutex;
-        std::list<util::Future<Addition>> _objectsToAdd;
-        std::list<vsg::ref_ptr<vsg::Node>> _objectsToRemove;
         std::map<vsg::ref_ptr<vsg::Window>, vsg::ref_ptr<vsg::CommandGraph>> _commandGraphByWindow;
         
         std::map<vsg::ref_ptr<vsg::View>, ViewData> _viewData;
@@ -171,8 +166,6 @@ namespace ROCKY_NAMESPACE
         void setupViewer(vsg::ref_ptr<vsg::Viewer> viewer);
 
         void recreateViewer();
-
-        void addAndRemoveObjects();
 
         void addViewAfterViewerIsRealized(
             vsg::ref_ptr<vsg::Window> window,
@@ -191,3 +184,4 @@ namespace ROCKY_NAMESPACE
         return _viewData[view];
     }
 }
+

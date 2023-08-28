@@ -4,7 +4,6 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/MapObject.h>
 #include <rocky/Feature.h>
 #include <optional>
 #include <functional>
@@ -30,7 +29,7 @@ namespace ROCKY_NAMESPACE
     * FeatureView is an attachment that compiles a collection of Feature objects
     * for visualization.
     */
-    class ROCKY_VSG_EXPORT FeatureView : public rocky::Inherit<AttachmentGroup, FeatureView>
+    class ROCKY_VSG_EXPORT FeatureView : public ECS::Component
     {
     public:
         //! Collection of features to view
@@ -38,6 +37,13 @@ namespace ROCKY_NAMESPACE
 
         //! Styles to use when compiling features
         StyleSheet styles;
+
+        //! 
+        void generate(
+            ECS::Entities& registry,
+            Runtime& runtime);
+
+        bool visible = true;
 
     public:
         //! Default construct - no data
@@ -48,10 +54,5 @@ namespace ROCKY_NAMESPACE
 
         //! Construct a view to display a single moved feature)
         FeatureView(Feature&& value);
-
-    protected:
-        void createNode(Runtime& runtime) override;
-
-    private:
     };
 }

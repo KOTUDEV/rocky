@@ -11,15 +11,16 @@ using namespace ROCKY_NAMESPACE;
 
 auto Demo_LineString_Absolute = [](Application& app)
 {
-    static shared_ptr<MapObject> object;
-    static shared_ptr<LineString> line;
+    static entt::entity entity = entt::null;
     static bool visible = true;
 
-    if (!line)
+    if (entity == entt::null)
     {
         ImGui::Text("Wait...");
 
-        line = LineString::create();
+        entity = app.entities().create();
+        auto& line = app.entities().emplace<MultiLineString>(entity);
+
         auto xform = rocky::SRS::WGS84.to(rocky::SRS::ECEF);
         const double alt = 125000;
         std::vector<glm::dvec3> points;
@@ -29,122 +30,96 @@ auto Demo_LineString_Absolute = [](Application& app)
             if (xform(glm::dvec3(lon, -20.0, alt), ecef))
                 points.push_back(ecef);
         }
-        line->setGeometry(points.begin(), points.end());
-        line->setStyle(LineStyle{ { 1,1,0,1 }, 3.0f, 0xffff, 4 });
-
-        // Add an object with both attachments
-        object = MapObject::create(line);
-        app.add(object);
-
-        return;
+        line.push(points.begin(), points.end());
+        line.style = LineStyle{ { 1,1,0,1 }, 3.0f, 0xffff, 4 };
+        line.write_depth = true;
     }
 
     if (ImGuiLTable::Begin("absolute linestring"))
     {
-        if (ImGuiLTable::Checkbox("Visible", &visible))
+        auto& component = app.entities().get<MultiLineString>(entity);
+
+        ImGuiLTable::Checkbox("Visible", &component.visible);
+
+        if (component.style.has_value())
         {
-            if (visible)
-                app.add(object);
-            else
-                app.remove(object);
+            float* col = (float*)&component.style->color;
+            if (ImGuiLTable::ColorEdit3("Color", col))
+            {
+                component.dirty();
+            }
+
+            if (ImGuiLTable::SliderFloat("Width", &component.style->width, 1.0f, 15.0f, "%.0f"))
+            {
+                component.dirty();
+            }
+
+            if (ImGuiLTable::SliderInt("Stipple pattern", &component.style->stipple_pattern, 0x0001, 0xffff, "%04x", ImGuiSliderFlags_Logarithmic))
+            {
+                component.dirty();
+            }
+
+            if (ImGuiLTable::SliderInt("Stipple factor", &component.style->stipple_factor, 1, 4))
+            {
+                component.dirty();
+            }
+
+            ImGuiLTable::End();
         }
-
-        LineStyle style = line->style();
-
-        float* col = (float*)&style.color;
-        if (ImGuiLTable::ColorEdit3("Color", col))
-        {
-            style.color.a = 1.0f;
-            line->setStyle(style);
-        }
-
-        if (ImGuiLTable::SliderFloat("Width", &style.width, 1.0f, 15.0f, "%.0f"))
-        {
-            line->setStyle(style);
-        }
-
-        if (ImGuiLTable::SliderInt("Stipple pattern", &style.stipple_pattern, 0x0001, 0xffff, "%04x", ImGuiSliderFlags_Logarithmic))
-        {
-            line->setStyle(style);
-        }
-
-        if (ImGuiLTable::SliderInt("Stipple factor", &style.stipple_factor, 1, 4))
-        {
-            line->setStyle(style);
-        }
-
-        ImGuiLTable::End();
     }
 };
 
 auto Demo_LineString_Relative = [](Application& app)
 {
-    static shared_ptr<MapObject> object;
-    static shared_ptr<LineString> line;
+    static entt::entity entity = entt::null;
     static bool visible = true;
 
-    if (!line)
+    if (entity == entt::null)
     {
         ImGui::Text("Wait...");
 
+        entity = app.entities().create();
+        auto& line = app.entities().emplace<MultiLineString>(entity);
+
         const double size = 500000;
-        line = LineString::create();
-        line->underGeoTransform = true;
         std::vector<vsg::vec3> points = {
             {-size, -size, 0},
             { size, -size, 0},
             {    0,  size, 0},
             {-size, -size, 0} };
-        line->setGeometry(points.begin(), points.end());
-        line->setStyle(LineStyle{ {1,0,0,1}, 4.0f });
-        
-        // Add an object with both attachments
-        object = MapObject::create(line);
-        app.add(object);
+        line.push(points.begin(), points.end());
+        line.style = LineStyle{ {1,0,0,1}, 4.0f };
+        line.write_depth = true;
 
-        // Position the transform (will only apply to the relative attachment)
-        object->xform->setPosition(GeoPoint(SRS::WGS84, 0.0, 0.0, 25000.0));
-        
-        // by the next frame, the object will be alive in the scene
-        return;
+        // Position the transform
+        auto& transform = app.entities().emplace<EntityTransform>(entity);
+        transform.node->setPosition(GeoPoint(SRS::WGS84, -30.0, 10.0, 25000.0));
+        transform.node->bound.radius = size; // for horizon culling
     }
 
     if (ImGuiLTable::Begin("relative linestring"))
     {
-        if (ImGuiLTable::Checkbox("Visible", &visible))
+        auto& line = app.entities().get<MultiLineString>(entity);
+
+        ImGuiLTable::Checkbox("Visible", &line.visible);
+
+        if (line.style.has_value())
         {
-            if (visible)
-                app.add(object);
-            else
-                app.remove(object);
+            if (ImGuiLTable::ColorEdit3("Color", (float*)&line.style->color))
+                line.dirty();
         }
 
-        LineStyle style = line->style();
+        auto& transform = app.entities().get<EntityTransform>(entity);
+        auto& xform = transform.node;
 
-        float* col = (float*)&style.color;
-        if (ImGuiLTable::ColorEdit3("Color", col))
-        {
-            style.color.a = 1.0f;
-            line->setStyle(style);
-        }
+        if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))
+            xform->dirty();
 
-        GeoPoint pos = object->xform->position();
-        glm::fvec3 v{ pos.x, pos.y, pos.z };
+        if (ImGuiLTable::SliderDouble("Longitude", &xform->position.x, -180.0, 180.0, "%.1lf"))
+            xform->dirty();
 
-        if (ImGuiLTable::SliderFloat("Latitude", &v.y, -85.0, 85.0, "%.1f"))
-        {
-            object->xform->setPosition(GeoPoint(pos.srs, v.x, v.y, v.z));
-        }
-
-        if (ImGuiLTable::SliderFloat("Longitude", &v.x, -180.0, 180.0, "%.1f"))
-        {
-            object->xform->setPosition(GeoPoint(pos.srs, v.x, v.y, v.z));
-        }
-        
-        if (ImGuiLTable::SliderFloat("Altitude", &v.z, 0.0, 2500000.0, "%.1f"))
-        {
-            object->xform->setPosition(GeoPoint(pos.srs, v.x, v.y, v.z));
-        }
+        if (ImGuiLTable::SliderDouble("Altitude", &xform->position.z, 0.0, 2500000.0, "%.1lf"))
+            xform->dirty();
 
         ImGuiLTable::End();
     }

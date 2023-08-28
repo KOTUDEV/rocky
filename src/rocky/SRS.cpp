@@ -98,6 +98,8 @@ namespace
         //! like "spherical-mercator" or "wgs84".
         SRSEntry& get_or_create(const std::string& def)
         {
+            ROCKY_PROFILE_FUNCTION();
+
             auto ctx = threading_context();
 
             auto iter = find(def);
@@ -203,6 +205,7 @@ namespace
         //! fetch the projection type
         PJ_TYPE get_horiz_crs_type(const std::string& def)
         {
+            ROCKY_PROFILE_FUNCTION();
             return get_or_create(def).horiz_crs_type;
         }
 
@@ -210,12 +213,15 @@ namespace
         //! that was previously created
         const Ellipsoid& get_ellipsoid(const std::string& def)
         {
+            ROCKY_PROFILE_FUNCTION();
             return get_or_create(def).ellipsoid;
         };
 
         //! Get the computed bounds of a projection (or guess at them)
         const Box& get_bounds(const std::string& def)
         {
+            ROCKY_PROFILE_FUNCTION();
+
             auto ctx = threading_context();
 
             SRSEntry& entry = get_or_create(def);
@@ -276,6 +282,8 @@ namespace
 
         const std::string& get_wkt(const std::string& def)
         {
+            ROCKY_PROFILE_FUNCTION();
+
             auto iter = find(def);
             if (iter == end())
             {
@@ -287,22 +295,11 @@ namespace
             return iter->second.wkt;
         }
 
-#if 0
-        //! process a vertical datum grid name into a proper file name for proj to load
-        std::string make_grid_name(const std::string& in)
-        {
-            if (in == "egm96")
-                return "us_nga_egm96_15.tif";
-            else if (!std::filesystem::path(in).has_extension())
-                return in + ".tif";
-            else
-                return in;
-        }
-#endif
-
         //! retrieve or create a transformation object
         PJ* get_or_create_operation(const std::string& firstDef, const std::string& secondDef)
         {
+            ROCKY_PROFILE_FUNCTION();
+
             auto ctx = threading_context();
 
             PJ* pj = nullptr;
@@ -588,6 +585,8 @@ SRS::to(const SRS& rhs) const
 SRS
 SRS::geoSRS() const
 {
+    ROCKY_PROFILE_FUNCTION();
+
     if (isGeodetic())
         return *this;
 
@@ -621,6 +620,8 @@ SRS::geoSRS() const
 SRS
 SRS::geocentricSRS() const
 {
+    ROCKY_PROFILE_FUNCTION();
+
     auto& def = g_srs_factory.get_or_create(_definition);
     if (def.pj)
     {

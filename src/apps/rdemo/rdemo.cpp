@@ -76,7 +76,7 @@ void setup_demos(rocky::Application& app)
         Demo{ "Map", Demo_Map });
 
     demos.emplace_back(
-        Demo{ "Primitives", {},
+        Demo{ "Components", {},
         {
             Demo{ "Label", Demo_Label },
             Demo{ "LineString - absolute", Demo_LineString_Absolute },
@@ -91,8 +91,8 @@ void setup_demos(rocky::Application& app)
     demos.emplace_back(
         Demo{ "GIS Features", {},
         {
-            Demo{ "Line features", Demo_LineFeatures },
-            Demo{ "Polygon features", Demo_PolygonFeatures }
+            Demo{ "Polygon features", Demo_PolygonFeatures },
+            Demo{ "Line features", Demo_LineFeatures }
         } }
     );
 

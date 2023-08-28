@@ -4,8 +4,11 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/MapObject.h>
-#include <rocky_vsg/engine/LineState.h>
+#include <rocky_vsg/ECS.h>
+#include <vsg/nodes/Geometry.h>
+#include <vsg/commands/DrawIndexed.h>
+#include <vsg/state/BindDescriptorSet.h>
+#include <optional>
 
 namespace ROCKY_NAMESPACE
 {
@@ -23,83 +26,101 @@ namespace ROCKY_NAMESPACE
     };
 
     /**
-    * LineString Attachment
+    * Renders a line or linestring geometry.
     */
-    class ROCKY_VSG_EXPORT LineString : public rocky::Inherit<Attachment, LineString>
+    class ROCKY_VSG_EXPORT LineStringGeometry : public vsg::Inherit<vsg::Geometry, LineStringGeometry>
     {
     public:
-        //! Construct a line string attachment
-        LineString();
+        //! Construct a new line string geometry node
+        LineStringGeometry();
 
-        //! Sets the line string geometry to the points in the provided range.
-        //! @param begin Iterator to first point in the range
-        //! @param end Interator past the last point in the range
-        template<class VEC3_ITER>
-        inline void setGeometry(VEC3_ITER begin, VEC3_ITER end);
+        //! Adds a vertex to the end of the line string
+        void push_back(const vsg::vec3& vert);
 
-        //! Set the rendering style for this line string
-        void setStyle(const LineStyle&);
+        //! Number of verts comprising this line string
+        unsigned numVerts() const;
 
-        //! rendering style for the geometry
-        const LineStyle& style() const;
+        //! The first vertex in the line string to render
+        void setFirst(unsigned value);
 
-        //! serialize as JSON string
-        JSON to_json() const override;
+        //! Number of vertices in the line string to render
+        void setCount(unsigned value);
+
+        //! Recompile the geometry after making changes.
+        //! TODO: just make it dynamic instead
+        void compile(vsg::Context&) override;
 
     protected:
-        void createNode(Runtime& runtime) override;
-
-    private:
-        vsg::ref_ptr<BindLineStyle> _bindStyle;
-        vsg::ref_ptr<LineStringGeometry> _geometry;
+        vsg::vec4 _defaultColor = { 1,1,1,1 };
+        std::vector<vsg::vec3> _current;
+        std::vector<vsg::vec3> _previous;
+        std::vector<vsg::vec3> _next;
+        std::vector<vsg::vec4> _colors;
+        vsg::ref_ptr<vsg::DrawIndexed> _drawCommand;
     };
 
-    // inline implementations
-    template<class VEC3_ITER> void LineString::setGeometry(VEC3_ITER begin, VEC3_ITER end) {
-        _geometry = LineStringGeometry::create();
-        for (VEC3_ITER i = begin; i != end; ++i)
-            _geometry->push_back({ (float)i->x, (float)i->y, (float)i->z });
-    }
+    /**
+    * Applies a line style.
+    */
+    class ROCKY_VSG_EXPORT BindLineDescriptors : public vsg::Inherit<vsg::BindDescriptorSet, BindLineDescriptors>
+    {
+    public:
+        //! Construct a line style node
+        BindLineDescriptors();
 
+        //! Initialize this command with the associated layout
+        void init(vsg::ref_ptr<vsg::PipelineLayout> layout);
+
+        //! Refresh the data buffer contents on the GPU
+        void updateStyle(const LineStyle&);
+
+        vsg::ref_ptr<vsg::ubyteArray> _styleData;
+    };
 
     /**
-    * MultiLineString Attachment - holds one or more separate line string geometries
+    * MultiLineString component - holds one or more separate line string geometries
     * sharing the same style.
     */
-    class ROCKY_VSG_EXPORT MultiLineString : public rocky::Inherit<Attachment, MultiLineString>
+    class ROCKY_VSG_EXPORT MultiLineString : public ECS::NodeComponent
     {
     public:
         //! Construct a new multi-linestring attachment
         MultiLineString();
 
+        std::optional<LineStyle> style;
+
+        bool write_depth = false;
+
         //! Pushes a new sub-geometry along with its range of points.
         //! @param begin Iterator of first point to add to the new sub-geometry
         //! @param end Iterator past the final point to add to the new sub-geometry
         template<class VEC3_ITER>
-        inline void pushGeometry(VEC3_ITER begin, VEC3_ITER end);
+        inline void push(VEC3_ITER begin, VEC3_ITER end);
 
-        //! Set the rendering style for this line string
-        void setStyle(const LineStyle&);
-
-        //! rendering style for the geometry
-        const LineStyle& style() const;
+        //! If using style, call this after changing a style to apply it
+        void dirty();
 
         //! serialize as JSON string
         JSON to_json() const override;
 
-    protected:
-        void createNode(Runtime& runtime) override;
+    public: // NodeComponent
+
+        void initializeNode(const ECS::VSG_ComponentParams&) override;
+
+        int featureMask() const override;
 
     private:
-        vsg::ref_ptr<BindLineStyle> _bindStyle;
-        std::vector<vsg::ref_ptr<LineStringGeometry>> _geometries;
+        vsg::ref_ptr<BindLineDescriptors> bindCommand;
+        std::vector<vsg::ref_ptr<LineStringGeometry>> geometries;
+
+        friend class LineSystem;
     };
 
     // inline implementations
-    template<class VEC3_ITER> void MultiLineString::pushGeometry(VEC3_ITER begin, VEC3_ITER end) {
+    template<class VEC3_ITER> void MultiLineString::push(VEC3_ITER begin, VEC3_ITER end) {
         auto geom = LineStringGeometry::create();
         for (VEC3_ITER i = begin; i != end; ++i)
             geom->push_back({ (float)i->x, (float)i->y, (float)i->z });
-        _geometries.push_back(geom);
+        geometries.push_back(geom);
     }
 }

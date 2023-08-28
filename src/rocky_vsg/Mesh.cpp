@@ -5,72 +5,75 @@
  */
 #include "Mesh.h"
 #include "json.h"
+#include "engine/MeshSystem.h"
 #include "engine/Runtime.h"
+#include <vsg/Nodes/CullNode.h>
 #include <vsg/nodes/DepthSorted.h>
+#include <vsg/utils/ComputeBounds.h>
 
 using namespace ROCKY_NAMESPACE;
 
-Mesh::Mesh() :
-    super()
+Mesh::Mesh()
 {
-    _geometry = MeshGeometry::create();
+    geometry = MeshGeometry::create();
 }
 
 void
 Mesh::dirty()
 {
-    if (_bindStyle)
+    if (bindCommand)
     {
         // update the UBO with the new style data.
         if (style.has_value())
         {
-            _bindStyle->updateStyle(style.value());
+            bindCommand->updateStyle(style.value());
         }
     }
 }
 
-void
-Mesh::createNode(Runtime& runtime)
+int
+Mesh::featureMask() const
 {
-    if (!node)
+    return MeshSystem::featureMask(*this);
+}
+
+void
+Mesh::initializeNode(const ECS::VSG_ComponentParams& params)
+{
+    auto cull = vsg::CullNode::create();
+
+    if (style.has_value() || texture)
     {
-        ROCKY_HARD_ASSERT(MeshState::status.ok());
+        bindCommand = BindMeshDescriptors::create();
+        if (texture)
+            bindCommand->_imageInfo = texture;
+        dirty();
+        bindCommand->init(params.layout);
 
-        if (texture || style.has_value())
-        {
-            _bindStyle = BindMeshStyle::create();
-            _bindStyle->_imageInfo = texture;
-            dirty();
-        }
+        auto sg = vsg::StateGroup::create();
+        sg->stateCommands.push_back(bindCommand);
+        sg->addChild(geometry);
 
-        auto stateGroup = vsg::StateGroup::create();
-
-        int features = 0;
-        if (texture) features |= MeshState::TEXTURE;
-        if (writeDepth) features |= MeshState::WRITE_DEPTH;
-        if (_bindStyle) features |= MeshState::DYNAMIC_STYLE;
-
-        auto& config = MeshState::get(features);
-        stateGroup->stateCommands = config.pipelineStateCommands;
-
-        if (_bindStyle)
-        {
-            _bindStyle->build(config.pipelineConfig->layout);
-            stateGroup->addChild(_bindStyle);
-        }
-
-        stateGroup->addChild(_geometry);
-        auto sw = vsg::Switch::create();
-        sw->addChild(true, stateGroup);
-        node = sw;
+        cull->child = sg;
     }
+    else
+    {
+        cull->child = geometry;
+    }
+
+    vsg::ComputeBounds cb;
+    cull->child->accept(cb);
+    cull->bound.set((cb.bounds.min + cb.bounds.max) * 0.5, vsg::length(cb.bounds.min - cb.bounds.max) * 0.5);
+
+    node = cull;
 }
 
 JSON
 Mesh::to_json() const
 {
     ROCKY_SOFT_ASSERT(false, "Not yet implemented");
-    auto j = json::object();
-    set(j, "name", name);
+
+    auto j = json::parse(ECS::Component::to_json());
+    // todo
     return j.dump();
 }

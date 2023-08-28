@@ -23,32 +23,54 @@ auto Demo_Tethering = [](Application& app)
     if (!manip) return;
 
     // Make an entity for us to tether to and set it in motion
-    static std::shared_ptr<MapObject> entity;
-    const float s = 20.0;
-    if (!entity)
+    static entt::entity entity = entt::null;
+    static Status status;
+
+    if (status.failed())
     {
-        vsg::GeometryInfo gi;
-        gi.color = { 1.0, 0.1, 0.1, 1.0 };
-        gi.dx = { s, 0, 0 };
-        gi.dy = { 0, s, 0 };
-        gi.dz = { 0, 0, s };
-
-        auto attachment = Attachment::create();
-        auto sw = vsg::Switch::create();
-        sw->addChild(true, vsg::Builder().createSphere(gi));
-        attachment->node = sw;
-        attachment->underGeoTransform = true;
-
-        entity = MapObject::create(attachment);
-        entity->xform->setPosition(GeoPoint(SRS::WGS84, -121, 38, 25000.0));
-
-        app.add(entity);
+        ImGui::TextColored(ImVec4(1, 0, 0, 1), "Image load failed");
+        ImGui::TextColored(ImVec4(1, 0, 0, 1), status.message.c_str());
+        return;
     }
 
-    // move the entity:
-    auto pos = entity->xform->position();
-    pos.x += 0.0005;
-    entity->xform->setPosition(pos);
+    const float s = 20.0;
+
+    // Make an entity to tether to.
+    if (entity == entt::null)
+    {
+        entity = app.entities().create();
+
+        auto io = app.instance.ioOptions();
+        auto image = io.services().readImageFromURI("https://github.com/gwaldron/osgearth/blob/master/data/bank.png?raw=true", io);
+        if (image.status.ok()) {
+            auto& icon = app.entities().emplace<Icon>(entity);
+            icon.image = image.value;
+            icon.style = IconStyle{ 64.0f, 0.0f };
+        }
+
+        auto& mesh = app.entities().emplace<Mesh>(entity);
+        vsg::vec3 verts[4] = { { -s, -s, 0 }, {  s, -s, 0 }, {  s,  s, 0 }, { -s,  s, 0 } };
+        unsigned indices[6] = { 0,1,2, 0,2,3 };
+        vsg::vec4 color{ 1, 1, 0, 0.55 };
+        for (unsigned i = 0; i < 6; ) {
+            mesh.add({
+                {verts[indices[i++]], verts[indices[i++]], verts[indices[i++]]},
+                {color, color, color} });
+        }
+        
+        auto& arrow = app.entities().emplace<MultiLineString>(entity);
+        std::vector<vsg::vec3> v0 { {0,0,0}, {s * 2, 0, 0} };
+        std::vector<vsg::vec3> v1{ {s * 1.5, s * 0.5, 0}, {s * 2, 0, 0}, {s * 1.5, -s * 0.5, 0} };
+        arrow.push(v0.begin(), v0.end());
+        arrow.push(v1.begin(), v1.end());
+        arrow.style = LineStyle{ {1,0.5,0,1}, 4.0f };
+
+        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        xform.node->setPosition(GeoPoint(SRS::WGS84, -121, 55, 50000));
+
+        auto& motion = app.entities().emplace<EntityMotion>(entity);
+        motion.velocity = { 1000, 0, 0 };
+    }
 
     if (ImGuiLTable::Begin("tethering"))
     {
@@ -57,9 +79,12 @@ auto Demo_Tethering = [](Application& app)
         {
             if (tethering)
             {
+                auto& xform = app.entities().get<EntityTransform>(entity);
                 auto vp = manip->getViewpoint();
-                vp.target = entity;
+                vp.target = PositionedObjectAdapter<GeoTransform>::create(xform.node);
                 vp.range = s * 12.0;
+                vp.pitch = -45;
+                vp.heading = 45;
                 manip->setViewpoint(vp, 2.0s);
             }
             else
@@ -67,6 +92,10 @@ auto Demo_Tethering = [](Application& app)
                 manip->home();
             }
         }
+
+        auto& motion = app.entities().get<EntityMotion>(entity);
+        ImGuiLTable::SliderDouble("Speed", &motion.velocity.x, 0.0, 10000.0, "%.0lf");
+
         ImGuiLTable::End();
     }
 };

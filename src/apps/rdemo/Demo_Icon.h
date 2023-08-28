@@ -13,9 +13,7 @@ using namespace ROCKY_NAMESPACE;
 
 auto Demo_Icon = [](Application& app)
 {
-    static shared_ptr<MapObject> object;
-    static shared_ptr<Icon> icon;
-    static bool visible = true;
+    static entt::entity entity = entt::null;
     static Status status;
 
     if (status.failed())
@@ -25,7 +23,7 @@ auto Demo_Icon = [](Application& app)
         return;
     }
 
-    if (!icon)
+    if (entity == entt::null)
     {
         ImGui::Text("Wait...");
 
@@ -37,40 +35,31 @@ auto Demo_Icon = [](Application& app)
             return;
         }
 
-        icon = Icon::create();
+        entity = app.entities().create();
+        auto& icon = app.entities().emplace<Icon>(entity);
 
-        icon->setImage(image.value);
-        icon->setStyle(IconStyle{ 128.0f });
+        icon.image = image.value;
+        icon.style = IconStyle{ 75, 0.0f }; // pixel size, rotation(radians)
 
-        object = MapObject::create(icon);
-        object->xform->setPosition(GeoPoint(SRS::WGS84, 0, 0, 50000));
-
-        app.add(object);
-
-        // by the next frame, the object will be alive in the scene
-        return;
+        // Transform to place the icon:
+        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        xform.node->setPosition(GeoPoint(SRS::WGS84, 0, 0, 50000));
     }
 
     if (ImGuiLTable::Begin("icon"))
     {
-        if (ImGuiLTable::Checkbox("Visible", &visible))
+        auto& icon = app.entities().get<Icon>(entity);
+
+        ImGuiLTable::Checkbox("Visible", &icon.visible);
+
+        if (ImGuiLTable::SliderFloat("Pixel size", &icon.style.size_pixels, 1.0f, 1024.0f))
         {
-            if (visible)
-                app.add(object);
-            else
-                app.remove(object);
+            icon.dirty();
         }
 
-        auto style = icon->style();
-
-        if (ImGuiLTable::SliderFloat("Pixel size", &style.size_pixels, 1.0f, 1024.0f))
+        if (ImGuiLTable::SliderFloat("Rotation", &icon.style.rotation_radians, 0.0f, 6.28f))
         {
-            icon->setStyle(style);
-        }
-
-        if (ImGuiLTable::SliderFloat("Rotation", &style.rotation_radians, 0.0f, 6.28f))
-        {
-            icon->setStyle(style);
+            icon.dirty();
         }
 
         ImGuiLTable::End();
