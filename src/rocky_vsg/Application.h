@@ -15,7 +15,6 @@
 #include <vsg/app/CommandGraph.h>
 #include <vsg/app/View.h>
 #include <vsg/nodes/Group.h>
-#include <vsg/commands/ClearAttachments.h>
 
 #include <chrono>
 #include <list>
@@ -34,21 +33,26 @@ namespace ROCKY_NAMESPACE
         //! @return exit code, 0 = no error
         int run();
 
-        //! Access the map.
-        //! @return Pointer to the map
-        std::shared_ptr<Map> map();
-
-        //! Entities
-        ECS::Entities& entities() {
-            return ecs->registry;
-        }
-
         //! Process and render one frame. If you call run(), this will
         //! happen automatically in a continuous loop.
         //! @return True upon success; false to quit the application.
         bool frame();
 
-    public: // Windows and Views
+        //! Access the map.
+        //! @return Pointer to the map
+        std::shared_ptr<Map> map();
+
+    public: // public properties
+
+        rocky::InstanceVSG instance;
+        ECS::Entities entities;
+        vsg::ref_ptr<rocky::MapNode> mapNode;
+        vsg::ref_ptr<rocky::SkyNode> skyNode;
+        vsg::ref_ptr<vsg::Viewer> viewer;
+        vsg::ref_ptr<vsg::Group> root;
+        vsg::ref_ptr<vsg::Group> mainScene;
+        vsg::ref_ptr<ECS::ECSNode> ecs;
+        std::function<void()> updateFunction;
 
         //! Collection of windows and views managed by the application.
         struct DisplayConfiguration
@@ -59,6 +63,29 @@ namespace ROCKY_NAMESPACE
 
             Windows windows;
         };
+        DisplayConfiguration displayConfiguration;
+
+        //! Runtime timing statistics
+        struct Stats
+        {
+            std::chrono::microseconds frame;
+            std::chrono::microseconds events;
+            std::chrono::microseconds update;
+            std::chrono::microseconds record;
+            std::chrono::microseconds present;
+
+        };
+        Stats stats;
+
+        //! About the application. Lists all the dependencies and their versions.
+        std::string about() const;
+
+        //! True is the debug validation layer is active, which will affect performance
+        bool debugLayerOn() const {
+            return _debuglayer;
+        }
+
+    public: // Windows and Views
 
         //! Information about each view.
         struct ViewData
@@ -108,34 +135,6 @@ namespace ROCKY_NAMESPACE
         //! TODO: add a way to remove or deactivate it
         void addPreRenderGraph(vsg::ref_ptr<vsg::Window> window, vsg::ref_ptr<vsg::RenderGraph> renderGraph);
 
-    public:
-        rocky::InstanceVSG instance;
-        vsg::ref_ptr<rocky::MapNode> mapNode;
-        vsg::ref_ptr<rocky::SkyNode> skyNode;
-        vsg::ref_ptr<vsg::Viewer> viewer;
-        vsg::ref_ptr<vsg::Group> root;
-        vsg::ref_ptr<vsg::Group> mainScene;
-        vsg::ref_ptr<ECS::ECSNode> ecs;
-        std::function<void()> updateFunction;
-        DisplayConfiguration displayConfiguration;
-
-        struct Stats
-        {
-            std::chrono::microseconds frame;
-            std::chrono::microseconds events;
-            std::chrono::microseconds update;
-            std::chrono::microseconds record;
-
-        };
-        Stats stats;
-
-        //! About the application. Lists all the dependencies and their versions.
-        std::string about() const;
-
-        //! True is the debug validation layer is active, which will affect performance
-        bool debugLayerOn() const {
-            return _debuglayer;
-        }
 
     public:
         //! Copy construction is disabled.
@@ -151,11 +150,6 @@ namespace ROCKY_NAMESPACE
         bool _multithreaded = true;
         bool _viewerRealized = false;
         bool _viewerDirty = false;
-
-        struct Addition {
-            vsg::ref_ptr<vsg::Node> node;
-            vsg::CompileResult compileResult;
-        };
 
         void realize();
 

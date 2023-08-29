@@ -12,23 +12,29 @@
 namespace ROCKY_NAMESPACE
 {
     /**
-    * Text label MapObject attachment
+    * Text label component
     */
     class ROCKY_VSG_EXPORT Label : public ECS::NodeComponent
     {
     public:
+        //! Construct a new label component
         Label();
 
+        //! Label content; call dirty() to apply
         std::string text;
 
+        //! Font (required); call dirty() to apply
         vsg::ref_ptr<vsg::Font> font;
 
+        //! Apply property changes
         void dirty();
 
         //! serialize as JSON string
         JSON to_json() const override;
 
-        void initializeNode(const ECS::VSG_ComponentParams&) override;
+    public: // NodeComponent interface
+
+        void initializeNode(const ECS::NodeComponent::Params&) override;
 
     protected:
         vsg::ref_ptr<vsg::Text> textNode;

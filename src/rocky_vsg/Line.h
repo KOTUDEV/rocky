@@ -28,11 +28,11 @@ namespace ROCKY_NAMESPACE
     /**
     * Renders a line or linestring geometry.
     */
-    class ROCKY_VSG_EXPORT LineStringGeometry : public vsg::Inherit<vsg::Geometry, LineStringGeometry>
+    class ROCKY_VSG_EXPORT LineGeometry : public vsg::Inherit<vsg::Geometry, LineGeometry>
     {
     public:
         //! Construct a new line string geometry node
-        LineStringGeometry();
+        LineGeometry();
 
         //! Adds a vertex to the end of the line string
         void push_back(const vsg::vec3& vert);
@@ -78,17 +78,19 @@ namespace ROCKY_NAMESPACE
     };
 
     /**
-    * MultiLineString component - holds one or more separate line string geometries
+    * LineString component - holds one or more separate line string geometries
     * sharing the same style.
     */
-    class ROCKY_VSG_EXPORT MultiLineString : public ECS::NodeComponent
+    class ROCKY_VSG_EXPORT Line : public ECS::NodeComponent
     {
     public:
-        //! Construct a new multi-linestring attachment
-        MultiLineString();
+        //! Construct a new component
+        Line();
 
+        //! Dynamic line styling. This is optional.
         std::optional<LineStyle> style;
 
+        //! Whether lines should write to the depth buffer
         bool write_depth = false;
 
         //! Pushes a new sub-geometry along with its range of points.
@@ -97,7 +99,7 @@ namespace ROCKY_NAMESPACE
         template<class VEC3_ITER>
         inline void push(VEC3_ITER begin, VEC3_ITER end);
 
-        //! If using style, call this after changing a style to apply it
+        //! Applies changes to the dynanmic "style"
         void dirty();
 
         //! serialize as JSON string
@@ -105,20 +107,19 @@ namespace ROCKY_NAMESPACE
 
     public: // NodeComponent
 
-        void initializeNode(const ECS::VSG_ComponentParams&) override;
+        void initializeNode(const ECS::NodeComponent::Params&) override;
 
         int featureMask() const override;
 
     private:
         vsg::ref_ptr<BindLineDescriptors> bindCommand;
-        std::vector<vsg::ref_ptr<LineStringGeometry>> geometries;
-
+        std::vector<vsg::ref_ptr<LineGeometry>> geometries;
         friend class LineSystem;
     };
 
     // inline implementations
-    template<class VEC3_ITER> void MultiLineString::push(VEC3_ITER begin, VEC3_ITER end) {
-        auto geom = LineStringGeometry::create();
+    template<class VEC3_ITER> void Line::push(VEC3_ITER begin, VEC3_ITER end) {
+        auto geom = LineGeometry::create();
         for (VEC3_ITER i = begin; i != end; ++i)
             geom->push_back({ (float)i->x, (float)i->y, (float)i->z });
         geometries.push_back(geom);

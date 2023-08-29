@@ -103,8 +103,8 @@ auto Demo_RTT = [](Application& app)
 
         // This is the geometry that we will apply the texture to. 
         // We have to add UVs (texture coordinates).
-        entity = app.entities().create();
-        auto& mesh = app.entities().emplace<Mesh>(entity);
+        entity = app.entities.create();
+        auto& mesh = app.entities.emplace<Mesh>(entity);
 
         //auto mesh = Mesh::create();
         auto xform = rocky::SRS::WGS84.to(rocky::SRS::ECEF);
@@ -149,9 +149,9 @@ auto Demo_RTT = [](Application& app)
 
     if (ImGuiLTable::Begin("model"))
     {
-        auto& mesh = app.entities().get<Mesh>(entity);
+        auto& mesh = app.entities.get<Mesh>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &mesh.visible);
+        ImGuiLTable::Checkbox("Visible", &mesh.active);
 
         ImGuiLTable::End();
     }

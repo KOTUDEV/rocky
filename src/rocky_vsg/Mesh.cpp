@@ -38,7 +38,7 @@ Mesh::featureMask() const
 }
 
 void
-Mesh::initializeNode(const ECS::VSG_ComponentParams& params)
+Mesh::initializeNode(const ECS::NodeComponent::Params& params)
 {
     auto cull = vsg::CullNode::create();
 

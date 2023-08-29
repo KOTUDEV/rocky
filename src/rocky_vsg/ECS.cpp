@@ -11,6 +11,16 @@ ROCKY_ABOUT(entt, ENTT_VERSION);
 
 using namespace ROCKY_NAMESPACE;
 
+
+JSON
+ECS::Component::to_json() const
+{
+    auto j = json::object();
+    set(j, "name", name);
+    return j.dump();
+}
+
+
 void
 ECS::ECSNode::initialize(Runtime& runtime)
 {
@@ -37,15 +47,6 @@ ECS::ECSNode::update(Runtime& runtime, vsg::time_point p)
             system->update(runtime, p);
         }
     }
-}
-
-
-JSON
-ECS::Component::to_json() const
-{
-    auto j = json::object();
-    set(j, "name", name);
-    return j.dump();
 }
 
 

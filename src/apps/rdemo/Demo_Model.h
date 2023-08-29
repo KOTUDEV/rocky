@@ -52,10 +52,10 @@ auto Demo_Model = [](Application& app)
         scaler->addChild(model);
 
         // New entity to host our model
-        entity = app.entities().create();
+        entity = app.entities.create();
 
         // The model component
-        auto& component = app.entities().emplace<ECS::NodeComponent>(entity);
+        auto& component = app.entities.emplace<ECS::NodeComponent>(entity);
         component.name = "Demo Model";
         component.node = scaler;
 
@@ -63,16 +63,16 @@ auto Demo_Model = [](Application& app)
         app.instance.runtime().compile(component.node);
 
         // A transform component to place it
-        auto& transform = app.entities().emplace<EntityTransform>(entity);
+        auto& transform = app.entities.emplace<EntityTransform>(entity);
         transform.node->setPosition(GeoPoint(SRS::WGS84, 50, 0, 250000));
     }
 
     if (ImGuiLTable::Begin("model"))
     {
-        auto& component = app.entities().get<ECS::NodeComponent>(entity);
-        ImGuiLTable::Checkbox("Visible", &component.visible);
+        auto& component = app.entities.get<ECS::NodeComponent>(entity);
+        ImGuiLTable::Checkbox("Visible", &component.active);
 
-        auto& transform = app.entities().get<EntityTransform>(entity);
+        auto& transform = app.entities.get<EntityTransform>(entity);
         auto& xform = transform.node;
 
         if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))

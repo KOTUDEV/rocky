@@ -117,7 +117,7 @@ namespace
         return m;
     }
 
-    void compile_feature_to_lines(const Feature& feature, const StyleSheet& styles, MultiLineString& line)
+    void compile_feature_to_lines(const Feature& feature, const StyleSheet& styles, Line& line)
     {
         float max_span = 100000.0f;
 
@@ -308,7 +308,7 @@ FeatureView::FeatureView(Feature&& f)
 }
 
 void
-FeatureView::generate(ECS::Entities& registry, Runtime& runtime)
+FeatureView::generate(ECS::Entities& registry, Runtime& runtime, bool keep_features)
 {
     entt::entity entity = registry.create();
 
@@ -317,16 +317,16 @@ FeatureView::generate(ECS::Entities& registry, Runtime& runtime)
         if (feature.geometry.type == Geometry::Type::LineString ||
             feature.geometry.type == Geometry::Type::MultiLineString)
         {
-            auto& geom = registry.get_or_emplace<MultiLineString>(entity);
+            auto& geom = registry.get_or_emplace<Line>(entity);
             compile_feature_to_lines(feature, styles, geom);
-            geom.visible_ptr = &visible;
+            geom.active_ptr = &active;
         }
         else
         if (feature.geometry.type == Geometry::Type::Polygon)
         {
             auto& geom = registry.get_or_emplace<Mesh>(entity);
             compile_polygon_feature_with_weemesh(feature, feature.geometry, styles, geom);
-            geom.visible_ptr = &visible;
+            geom.active_ptr = &active;
         }
         else if (feature.geometry.type == Geometry::Type::MultiPolygon)
         {
@@ -334,7 +334,7 @@ FeatureView::generate(ECS::Entities& registry, Runtime& runtime)
             for (auto& part : feature.geometry.parts)
             {
                 compile_polygon_feature_with_weemesh(feature, part, styles, geom);
-                geom.visible_ptr = &visible;
+                geom.active_ptr = &active;
             }
         }
         else
@@ -345,4 +345,7 @@ FeatureView::generate(ECS::Entities& registry, Runtime& runtime)
     }
 
     next_entity = entity;
+  
+    if (!keep_features)
+        features.clear();
 }

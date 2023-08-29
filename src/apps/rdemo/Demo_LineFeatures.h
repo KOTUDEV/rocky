@@ -4,7 +4,7 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/LineString.h>
+#include <rocky_vsg/Line.h>
 #include <rocky_vsg/FeatureView.h>
 
 #include "helpers.h"
@@ -25,8 +25,8 @@ auto Demo_LineFeatures= [](Application& app)
         ROCKY_HARD_ASSERT(fs_status.ok());
 
         // create a feature view and add features to it:
-        entity = app.entities().create();
-        FeatureView& feature_view = app.entities().emplace<FeatureView>(entity);
+        entity = app.entities.create();
+        FeatureView& feature_view = app.entities.emplace<FeatureView>(entity);
 
         auto iter = fs->iterate(app.instance.ioOptions());
         while (iter->hasMore())
@@ -51,15 +51,15 @@ auto Demo_LineFeatures= [](Application& app)
             100000.0f };     // resolution (geometric error)
             //0.0f };        // depth offset
 
-        feature_view.generate(app.entities(), app.instance.runtime());
+        feature_view.generate(app.entities, app.instance.runtime());
 
         return;
     }
 
     if (ImGuiLTable::Begin("Line features"))
     {
-        auto& component = app.entities().get<FeatureView>(entity);
-        ImGuiLTable::Checkbox("Visible", &component.visible);
+        auto& component = app.entities.get<FeatureView>(entity);
+        ImGuiLTable::Checkbox("Visible", &component.active);
 
         ImGuiLTable::End();
     }

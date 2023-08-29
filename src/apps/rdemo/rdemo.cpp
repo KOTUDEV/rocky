@@ -31,7 +31,7 @@ ROCKY_ABOUT(imgui, IMGUI_VERSION)
 using namespace ROCKY_NAMESPACE;
 
 #include "Demo_Map.h"
-#include "Demo_LineString.h"
+#include "Demo_Line.h"
 #include "Demo_Mesh.h"
 #include "Demo_Icon.h"
 #include "Demo_Model.h"
@@ -79,8 +79,8 @@ void setup_demos(rocky::Application& app)
         Demo{ "Components", {},
         {
             Demo{ "Label", Demo_Label },
-            Demo{ "LineString - absolute", Demo_LineString_Absolute },
-            Demo{ "LineString - relative", Demo_LineString_Relative },
+            Demo{ "Line - absolute", Demo_Line_Absolute },
+            Demo{ "Line - relative", Demo_Line_Relative },
             Demo{ "Mesh - absolute", Demo_Mesh_Absolute },
             Demo{ "Mesh - relative", Demo_Mesh_Relative },
             Demo{ "Icon", Demo_Icon },
@@ -131,6 +131,8 @@ struct MainGUI : public vsg::Inherit<vsg::Command, MainGUI>
             {
                 render(demo);
             }
+
+            ImGui::End();
         }
     }
 

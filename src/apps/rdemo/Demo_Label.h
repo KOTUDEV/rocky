@@ -32,20 +32,20 @@ auto Demo_Label = [](Application& app)
 
     if (entity == entt::null)
     {
-        entity = app.entities().create();
+        entity = app.entities.create();
 
-        auto& label = app.entities().emplace<Label>(entity);
+        auto& label = app.entities.emplace<Label>(entity);
         label.text = "Hello, world";
         label.font = font.value();
         
-        auto& transform = app.entities().emplace<EntityTransform>(entity);
+        auto& transform = app.entities.emplace<EntityTransform>(entity);
         transform.node->setPosition({ SRS::WGS84, -35.0, 15.0, 25000.0 });
     }
 
     if (ImGuiLTable::Begin("text"))
     {
-        auto& label = app.entities().get<Label>(entity);
-        ImGuiLTable::Checkbox("Visible", &label.visible);
+        auto& label = app.entities.get<Label>(entity);
+        ImGuiLTable::Checkbox("Visible", &label.active);
 
         char buf[256];
         strcpy(&buf[0], label.text.c_str());
@@ -55,7 +55,7 @@ auto Demo_Label = [](Application& app)
             label.dirty();
         }
 
-        auto& transform = app.entities().get<EntityTransform>(entity);
+        auto& transform = app.entities.get<EntityTransform>(entity);
         auto& xform = transform.node;
 
         if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))

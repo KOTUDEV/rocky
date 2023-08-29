@@ -8,8 +8,9 @@
 #include <rocky/Viewpoint.h>
 #include <rocky/SRS.h>
 #include <rocky_vsg/MapManipulator.h>
-
-#include <vsg/utils/Builder.h>
+#include <rocky_vsg/Mesh.h>
+#include <rocky_vsg/Line.h>
+#include <rocky_vsg/Icon.h>
 
 #include "helpers.h"
 using namespace ROCKY_NAMESPACE;
@@ -38,17 +39,19 @@ auto Demo_Tethering = [](Application& app)
     // Make an entity to tether to.
     if (entity == entt::null)
     {
-        entity = app.entities().create();
+        entity = app.entities.create();
 
+        // add an icon:
         auto io = app.instance.ioOptions();
-        auto image = io.services().readImageFromURI("https://github.com/gwaldron/osgearth/blob/master/data/bank.png?raw=true", io);
+        auto image = io.services().readImageFromURI("https://github.com/gwaldron/osgearth/blob/master/data/airport.png?raw=true", io);
         if (image.status.ok()) {
-            auto& icon = app.entities().emplace<Icon>(entity);
+            auto& icon = app.entities.emplace<Icon>(entity);
             icon.image = image.value;
-            icon.style = IconStyle{ 64.0f, 0.0f };
+            icon.style = IconStyle{ 48.0f, 0.0f }; // pixels, rotation(rad)
         }
 
-        auto& mesh = app.entities().emplace<Mesh>(entity);
+        // add a mesh plane:
+        auto& mesh = app.entities.emplace<Mesh>(entity);
         vsg::vec3 verts[4] = { { -s, -s, 0 }, {  s, -s, 0 }, {  s,  s, 0 }, { -s,  s, 0 } };
         unsigned indices[6] = { 0,1,2, 0,2,3 };
         vsg::vec4 color{ 1, 1, 0, 0.55 };
@@ -58,17 +61,20 @@ auto Demo_Tethering = [](Application& app)
                 {color, color, color} });
         }
         
-        auto& arrow = app.entities().emplace<MultiLineString>(entity);
+        // add an arrow line:
+        auto& arrow = app.entities.emplace<Line>(entity);
         std::vector<vsg::vec3> v0 { {0,0,0}, {s * 2, 0, 0} };
         std::vector<vsg::vec3> v1{ {s * 1.5, s * 0.5, 0}, {s * 2, 0, 0}, {s * 1.5, -s * 0.5, 0} };
         arrow.push(v0.begin(), v0.end());
         arrow.push(v1.begin(), v1.end());
         arrow.style = LineStyle{ {1,0.5,0,1}, 4.0f };
 
-        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        // Add a transform:
+        auto& xform = app.entities.emplace<EntityTransform>(entity);
         xform.node->setPosition(GeoPoint(SRS::WGS84, -121, 55, 50000));
 
-        auto& motion = app.entities().emplace<EntityMotion>(entity);
+        // Add a motion component to animate the entity:
+        auto& motion = app.entities.emplace<EntityMotion>(entity);
         motion.velocity = { 1000, 0, 0 };
     }
 
@@ -79,7 +85,7 @@ auto Demo_Tethering = [](Application& app)
         {
             if (tethering)
             {
-                auto& xform = app.entities().get<EntityTransform>(entity);
+                auto& xform = app.entities.get<EntityTransform>(entity);
                 auto vp = manip->getViewpoint();
                 vp.target = PositionedObjectAdapter<GeoTransform>::create(xform.node);
                 vp.range = s * 12.0;
@@ -93,7 +99,7 @@ auto Demo_Tethering = [](Application& app)
             }
         }
 
-        auto& motion = app.entities().get<EntityMotion>(entity);
+        auto& motion = app.entities.get<EntityMotion>(entity);
         ImGuiLTable::SliderDouble("Speed", &motion.velocity.x, 0.0, 10000.0, "%.0lf");
 
         ImGuiLTable::End();

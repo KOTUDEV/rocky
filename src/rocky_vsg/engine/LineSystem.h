@@ -4,7 +4,7 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/LineString.h>
+#include <rocky_vsg/Line.h>
 #include <rocky_vsg/ECS.h>
 
 namespace ROCKY_NAMESPACE
@@ -12,13 +12,12 @@ namespace ROCKY_NAMESPACE
     class Runtime;
 
     /**
-     * Creates commands for rendering line primitives and holds the singleton pipeline
-     * configurator for line drawing state.
+     * ECS system that handles LineString components
      */
     class ROCKY_VSG_EXPORT LineSystem :  public vsg::Inherit<ECS::SystemNode, LineSystem>
     {
     public:
-        //! Construct the line renderer
+        //! Construct the system
         LineSystem(entt::registry&);
 
         enum Features
@@ -28,11 +27,10 @@ namespace ROCKY_NAMESPACE
             NUM_PIPELINES = 2
         };
 
-        static int featureMask(const MultiLineString&);
+        static int featureMask(const Line&);
 
         void initialize(Runtime&) override;
 
-
-        ROCKY_VSG_SYSTEM_HELPER(MultiLineString, helper);
+        ROCKY_VSG_SYSTEM_HELPER(Line, helper);
     };
 }

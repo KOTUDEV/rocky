@@ -158,15 +158,15 @@ Application::Application(int& argc, char** argv) :
     // The ECS graph. ECSNode is the "root" that holds all SystemNodes.
     // We like these in the scene graph since they need to respond to
     // various VSG visitors and traversals.
-    ecs = ECS::ECSNode::create();
+    ecs = ECS::ECSNode::create(entities);
     
-    ecs->addChild(MeshSystem::create(ecs->registry));
-    ecs->addChild(LineSystem::create(ecs->registry));
-    ecs->addChild(SelfContainedNodeSystem::create(ecs->registry));
-    ecs->addChild(IconSystem::create(ecs->registry));
-    ecs->addChild(LabelSystem::create(ecs->registry));
+    ecs->addChild(MeshSystem::create(entities));
+    ecs->addChild(LineSystem::create(entities));
+    ecs->addChild(SelfContainedNodeSystem::create(entities));
+    ecs->addChild(IconSystem::create(entities));
+    ecs->addChild(LabelSystem::create(entities));
 
-    ecs->addChild(EntityMotionSystem::create(ecs->registry));
+    ecs->addChild(EntityMotionSystem::create(entities));
 
     mainScene->addChild(ecs);
 }
@@ -624,9 +624,7 @@ Application::frame()
 
     // User update
     if (updateFunction)
-    {
         updateFunction();
-    }
 
     // Event handling happens after updating the scene, otherwise
     // things like tethering to a moving node will be one frame behind
@@ -636,8 +634,8 @@ Application::frame()
     if (!viewer->active())
         return false;
 
-    // run through the viewer's update operations queue; this includes update ops 
-    // initialized by rocky (tile merges or MapObject adds)
+    // run through the viewer's update operations queue; this includes
+    // update ops initialized by rocky (e.g. terrain tile merges)
     viewer->update();
 
     // integrate any compile results that may be pending
@@ -663,6 +661,7 @@ Application::frame()
     stats.events = std::chrono::duration_cast<std::chrono::microseconds>(t_update - t_start);
     stats.update = std::chrono::duration_cast<std::chrono::microseconds>(t_record - t_update);
     stats.record = std::chrono::duration_cast<std::chrono::microseconds>(t_present - t_record);
+    stats.present = std::chrono::duration_cast<std::chrono::microseconds>(t_end - t_present);
 
     return true;
 }

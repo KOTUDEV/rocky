@@ -28,10 +28,13 @@ namespace ROCKY_NAMESPACE
         class ROCKY_VSG_EXPORT Component
         {
         public:
+            //! Component readable name
             std::string name;
 
+            //! Link to another entity in a collection
             entt::entity next_entity = entt::null;
 
+            //! Serialize this component to a JSON string
             virtual JSON to_json() const;
         };
 
@@ -60,19 +63,22 @@ namespace ROCKY_NAMESPACE
 
         /**
         * Base class for all ECS systems.
+        * A "system" is a module that performs operations on a
+        * specific Component type.
         */
         class ROCKY_VSG_EXPORT System
         {
+        public:
+            //! ECS entity registry
+            entt::registry& registry;
+
+            //! Status of the system; check this before using it
+            //! to make sure it is properly initialized
+            Status status;
+
         protected:
             System(entt::registry& registry_) :
                 registry(registry_) { }
-
-        public:
-            // ECS entity registry
-            entt::registry& registry;
-
-            // Status of the system
-            Status status;
         };
     }
 
@@ -83,12 +89,15 @@ namespace ROCKY_NAMESPACE
         /**
         * Node that holds all active ECS Systems as children, so that they
         * can properly respond to VSG visitors.
-        * This node also owns the ECS entity registry?
         */
         class ROCKY_VSG_EXPORT ECSNode : public vsg::Inherit<vsg::Group, ECSNode>
         {
         public:
-            Entities registry;
+            ECSNode(entt::registry& registry_) :
+                registry(registry_) { }
+
+            //! Entity registry reference
+            entt::registry& registry;
 
             //! Initialize all child systems; call once at startup
             void initialize(Runtime&);
@@ -98,37 +107,38 @@ namespace ROCKY_NAMESPACE
         };
 
         /**
-        * Component initialization parameters for VSG objects
-        */
-        struct VSG_ComponentParams
-        {
-            vsg::ref_ptr<vsg::PipelineLayout> layout;
-            vsg::ref_ptr<vsg::Options> readerWriterOptions;
-        };
-
-        /**
         * Base class for a ECS Component that exposes a list of VSG commands.
         */
         class ROCKY_VSG_EXPORT NodeComponent : public Component
         {
         public:
-            //! Subclass implements to create the "commands" object.
-            //! This will only be called if commands is nullptr.
-            virtual void initializeNode(const VSG_ComponentParams& layout) { }
+            /**
+            * Component initialization parameters for VSG objects
+            */
+            struct Params
+            {
+                vsg::ref_ptr<vsg::PipelineLayout> layout;
+                vsg::ref_ptr<vsg::Options> readerWriterOptions;
+            };
+
+        public:
+            //! Subclass implements to create and VSG objects.
+            //! Called by the System if the component's node is nullptr.
+            virtual void initializeNode(const Params&) { }
 
             //! Mask of features pertaining to this component instance, if applicable
             virtual int featureMask() const { return 0; }
 
-            //! Node that renders this component
+            //! VSG node that renders this component
             vsg::ref_ptr<vsg::Node> node;
 
-            // whether to draw this component
-            bool visible = true;
+            //! Whether to draw this component
+            bool active = true;
 
-            // Component developers can use this to tie this component's
-            // visiblity to another component. When this is set, "visible"
-            // is ignored.
-            bool* visible_ptr = &visible;
+            //! Component developers can use this to tie this component's
+            //! visiblity to another component. When this is set, "visible"
+            //! is ignored.
+            bool* active_ptr = &active;
         };
 
         /**
@@ -141,9 +151,6 @@ namespace ROCKY_NAMESPACE
             public ECS::System
         {
         public:
-            SystemNode(entt::registry& registry) :
-                ECS::System(registry) { }
-
             //! Initialize the ECS system (once at startup)
             virtual void initialize(Runtime& runtime) { }
 
@@ -154,9 +161,16 @@ namespace ROCKY_NAMESPACE
                 tick(runtime, time);
             }
 
+            //! Subclass this to perform per-frame operations on components
             virtual void tick(Runtime& runtime, time_point time) { }
 
         protected:
+            //! Constructor
+            SystemNode(entt::registry& registry) :
+                ECS::System(registry) { }
+
+            //! Override this to handle any components that need
+            //! initial setup
             virtual void initializeComponents(Runtime& rutime) { }
         };
 
@@ -169,7 +183,7 @@ namespace ROCKY_NAMESPACE
         * each component under the Graphics Pipeline appropiate for its
         * rendering properties.
         */
-        template<class T> // T must inherit from VSG_Component
+        template<class T> // T must inherit from NodeComponent
         class VSG_SystemHelper
         {
         public:
@@ -334,7 +348,7 @@ namespace ROCKY_NAMESPACE
         view.each([&](const entt::entity entity, const T& component)
             {
                 // Is the component visible?
-                if (*component.visible_ptr)
+                if (*component.active_ptr)
                 {
                     // Does it have a VSG node? If so, queue it up under the
                     // appropriate pipeline.
@@ -396,7 +410,7 @@ namespace ROCKY_NAMESPACE
         // initialization list by the record traversal.
         if (!entities_to_initialize.empty())
         {
-            VSG_ComponentParams params;
+            NodeComponent::Params params;
             params.readerWriterOptions = runtime.readerWriterOptions;
 
             for (auto& entity : entities_to_initialize)

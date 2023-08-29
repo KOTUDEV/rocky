@@ -4,7 +4,6 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/LineString.h>
 #include <rocky_vsg/FeatureView.h>
 #include <random>
 
@@ -32,8 +31,8 @@ auto Demo_PolygonFeatures = [](Application& app)
             return;
 
         // create a feature view and add features to it:
-        entity = app.entities().create();
-        FeatureView& feature_view = app.entities().emplace<FeatureView>(entity);
+        entity = app.entities.create();
+        FeatureView& feature_view = app.entities.emplace<FeatureView>(entity);
 
         if (fs->featureCount() > 0)
             feature_view.features.reserve(fs->featureCount());
@@ -61,15 +60,15 @@ auto Demo_PolygonFeatures = [](Application& app)
         };
 
         // make our entity and generate the geometry
-        feature_view.generate(app.entities(), app.instance.runtime());
+        feature_view.generate(app.entities, app.instance.runtime());
 
         return;
     }
 
     if (ImGuiLTable::Begin("Polygon features"))
     {
-        auto& component = app.entities().get<FeatureView>(entity);
-        ImGuiLTable::Checkbox("Visible", &component.visible);
+        auto& component = app.entities.get<FeatureView>(entity);
+        ImGuiLTable::Checkbox("Visible", &component.active);
 
         ImGuiLTable::End();
     }

@@ -7,7 +7,7 @@
 #include <rocky/Feature.h>
 #include <optional>
 #include <functional>
-#include <rocky_vsg/LineString.h>
+#include <rocky_vsg/Line.h>
 #include <rocky_vsg/Mesh.h>
 #include <rocky_vsg/Icon.h>
 
@@ -38,12 +38,18 @@ namespace ROCKY_NAMESPACE
         //! Styles to use when compiling features
         StyleSheet styles;
 
-        //! 
+        //! Create VSG geometry from the feature list
+        //! @param registry Entity registry
+        //! @param runtime Runtime operations interface
+        //! @param keep_features Whether to keep the "features" vector intact;
+        //!   by default it is cleared after calling generate
         void generate(
             ECS::Entities& registry,
-            Runtime& runtime);
+            Runtime& runtime,
+            bool keep_features = false);
 
-        bool visible = true;
+        //! Whether to render this component
+        bool active = true;
 
     public:
         //! Default construct - no data

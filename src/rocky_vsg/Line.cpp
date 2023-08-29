@@ -3,7 +3,7 @@
  * Copyright 2023 Pelican Mapping
  * MIT License
  */
-#include "LineString.h"
+#include "Line.h"
 #include "engine/LineSystem.h"
 #include "json.h"
 #include <vsg/nodes/CullNode.h>
@@ -13,13 +13,13 @@
 
 using namespace ROCKY_NAMESPACE;
 
-MultiLineString::MultiLineString()
+Line::Line()
 {
     bindCommand = BindLineDescriptors::create();
 }
 
 void
-MultiLineString::dirty()
+Line::dirty()
 {
     if (bindCommand)
     {
@@ -32,7 +32,7 @@ MultiLineString::dirty()
 }
 
 void
-MultiLineString::initializeNode(const ECS::VSG_ComponentParams& params)
+Line::initializeNode(const ECS::NodeComponent::Params& params)
 {
     auto cull = vsg::CullNode::create();
 
@@ -68,13 +68,13 @@ MultiLineString::initializeNode(const ECS::VSG_ComponentParams& params)
 }
 
 int
-MultiLineString::featureMask() const
+Line::featureMask() const
 {
     return LineSystem::featureMask(*this);
 }
 
 JSON
-MultiLineString::to_json() const
+Line::to_json() const
 {
     ROCKY_SOFT_ASSERT(false, "Not yet implemented");
 

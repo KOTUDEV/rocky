@@ -43,7 +43,7 @@ Label::dirty()
 }
 
 void
-Label::initializeNode(const ECS::VSG_ComponentParams& params)
+Label::initializeNode(const ECS::NodeComponent::Params& params)
 {
     ROCKY_SOFT_ASSERT_AND_RETURN(font.valid(), void());
 

@@ -4,12 +4,12 @@
  * MIT License
  */
 #pragma once
-#include <rocky_vsg/LineString.h>
+#include <rocky_vsg/Line.h>
 
 #include "helpers.h"
 using namespace ROCKY_NAMESPACE;
 
-auto Demo_LineString_Absolute = [](Application& app)
+auto Demo_Line_Absolute = [](Application& app)
 {
     static entt::entity entity = entt::null;
     static bool visible = true;
@@ -18,8 +18,8 @@ auto Demo_LineString_Absolute = [](Application& app)
     {
         ImGui::Text("Wait...");
 
-        entity = app.entities().create();
-        auto& line = app.entities().emplace<MultiLineString>(entity);
+        entity = app.entities.create();
+        auto& line = app.entities.emplace<Line>(entity);
 
         auto xform = rocky::SRS::WGS84.to(rocky::SRS::ECEF);
         const double alt = 125000;
@@ -37,39 +37,31 @@ auto Demo_LineString_Absolute = [](Application& app)
 
     if (ImGuiLTable::Begin("absolute linestring"))
     {
-        auto& component = app.entities().get<MultiLineString>(entity);
+        auto& component = app.entities.get<Line>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &component.visible);
+        ImGuiLTable::Checkbox("Visible", &component.active);
 
         if (component.style.has_value())
         {
             float* col = (float*)&component.style->color;
             if (ImGuiLTable::ColorEdit3("Color", col))
-            {
                 component.dirty();
-            }
 
             if (ImGuiLTable::SliderFloat("Width", &component.style->width, 1.0f, 15.0f, "%.0f"))
-            {
                 component.dirty();
-            }
 
             if (ImGuiLTable::SliderInt("Stipple pattern", &component.style->stipple_pattern, 0x0001, 0xffff, "%04x", ImGuiSliderFlags_Logarithmic))
-            {
                 component.dirty();
-            }
 
             if (ImGuiLTable::SliderInt("Stipple factor", &component.style->stipple_factor, 1, 4))
-            {
                 component.dirty();
-            }
 
             ImGuiLTable::End();
         }
     }
 };
 
-auto Demo_LineString_Relative = [](Application& app)
+auto Demo_Line_Relative = [](Application& app)
 {
     static entt::entity entity = entt::null;
     static bool visible = true;
@@ -78,8 +70,8 @@ auto Demo_LineString_Relative = [](Application& app)
     {
         ImGui::Text("Wait...");
 
-        entity = app.entities().create();
-        auto& line = app.entities().emplace<MultiLineString>(entity);
+        entity = app.entities.create();
+        auto& line = app.entities.emplace<Line>(entity);
 
         const double size = 500000;
         std::vector<vsg::vec3> points = {
@@ -92,16 +84,16 @@ auto Demo_LineString_Relative = [](Application& app)
         line.write_depth = true;
 
         // Position the transform
-        auto& transform = app.entities().emplace<EntityTransform>(entity);
+        auto& transform = app.entities.emplace<EntityTransform>(entity);
         transform.node->setPosition(GeoPoint(SRS::WGS84, -30.0, 10.0, 25000.0));
         transform.node->bound.radius = size; // for horizon culling
     }
 
     if (ImGuiLTable::Begin("relative linestring"))
     {
-        auto& line = app.entities().get<MultiLineString>(entity);
+        auto& line = app.entities.get<Line>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &line.visible);
+        ImGuiLTable::Checkbox("Visible", &line.active);
 
         if (line.style.has_value())
         {
@@ -109,7 +101,7 @@ auto Demo_LineString_Relative = [](Application& app)
                 line.dirty();
         }
 
-        auto& transform = app.entities().get<EntityTransform>(entity);
+        auto& transform = app.entities.get<EntityTransform>(entity);
         auto& xform = transform.node;
 
         if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))

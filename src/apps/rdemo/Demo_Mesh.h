@@ -16,8 +16,8 @@ auto Demo_Mesh_Absolute = [](Application& app)
     if (entity == entt::null)
     {
         // Make an entity to hold our mesh:
-        entity = app.entities().create();
-        auto& mesh = app.entities().emplace<Mesh>(entity);
+        entity = app.entities.create();
+        auto& mesh = app.entities.emplace<Mesh>(entity);
 
         // Make some geometry:
         auto xform = SRS::WGS84.to(SRS::WGS84.geocentricSRS());
@@ -47,9 +47,9 @@ auto Demo_Mesh_Absolute = [](Application& app)
 
     if (ImGuiLTable::Begin("Mesh"))
     {
-        auto& mesh = app.entities().get<Mesh>(entity);
+        auto& mesh = app.entities.get<Mesh>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &mesh.visible);
+        ImGuiLTable::Checkbox("Visible", &mesh.active);
 
         if (mesh.style.has_value())
         {
@@ -85,8 +85,8 @@ auto Demo_Mesh_Relative = [](Application& app)
     {
         ImGui::Text("Wait...");
 
-        entity = app.entities().create();
-        Mesh& mesh = app.entities().emplace<Mesh>(entity);
+        entity = app.entities.create();
+        Mesh& mesh = app.entities.emplace<Mesh>(entity);
         mesh.name = "Relative Mesh";
 
         const float s = 250000.0;
@@ -120,18 +120,18 @@ auto Demo_Mesh_Relative = [](Application& app)
 
         // Add a transform component so we can position our mesh relative
         // to some geospatial coordinates.
-        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        auto& xform = app.entities.emplace<EntityTransform>(entity);
         xform.node->position = GeoPoint(SRS::WGS84, 24.0, 24.0, s * 3.0);
         xform.node->bound.radius = s * sqrt(2);
     }
 
     if (ImGuiLTable::Begin("Mesh"))
     {
-        auto& mesh = app.entities().get<Mesh>(entity);
+        auto& mesh = app.entities.get<Mesh>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &mesh.visible);
+        ImGuiLTable::Checkbox("Visible", &mesh.active);
 
-        auto* style = app.entities().try_get<MeshStyle>(entity);
+        auto* style = app.entities.try_get<MeshStyle>(entity);
         if (style)
         {
             if (ImGuiLTable::ColorEdit4("Color", (float*)&style->color))
@@ -141,7 +141,7 @@ auto Demo_Mesh_Relative = [](Application& app)
                 mesh.dirty();
         }
 
-        auto& xform = app.entities().get<EntityTransform>(entity).node;
+        auto& xform = app.entities.get<EntityTransform>(entity).node;
 
         if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))
             xform->dirty();
@@ -164,8 +164,8 @@ auto Demo_Mesh_Multi = [](Application& app)
 
     if (entity == entt::null)
     {
-        entity = app.entities().create();
-        Mesh& mesh = app.entities().emplace<Mesh>(entity);
+        entity = app.entities.create();
+        Mesh& mesh = app.entities.emplace<Mesh>(entity);
         mesh.name = "Relative Mesh";
 
         const float s = 250000.0;
@@ -199,17 +199,17 @@ auto Demo_Mesh_Multi = [](Application& app)
 
         // Add a transform component so we can position our mesh relative
         // to some geospatial coordinates.
-        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        auto& xform = app.entities.emplace<EntityTransform>(entity);
         xform.node->setPosition(GeoPoint(SRS::WGS84, 24.0, 24.0, s * 3.0));
     }
 
     if (ImGuiLTable::Begin("Mesh"))
     {
-        auto& mesh = app.entities().get<Mesh>(entity);
+        auto& mesh = app.entities.get<Mesh>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &mesh.visible);
+        ImGuiLTable::Checkbox("Visible", &mesh.active);
 
-        auto* style = app.entities().try_get<MeshStyle>(entity);
+        auto* style = app.entities.try_get<MeshStyle>(entity);
         if (style)
         {
             float* col = (float*)&style->color;
@@ -223,7 +223,7 @@ auto Demo_Mesh_Multi = [](Application& app)
             }
         }
 
-        auto& transform = app.entities().get<EntityTransform>(entity);
+        auto& transform = app.entities.get<EntityTransform>(entity);
         auto& xform = transform.node;
 
         if (ImGuiLTable::SliderDouble("Latitude", &xform->position.y, -85.0, 85.0, "%.1lf"))

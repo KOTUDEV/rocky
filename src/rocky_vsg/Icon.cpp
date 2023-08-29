@@ -25,7 +25,7 @@ Icon::dirty()
 }
 
 void
-Icon::initializeNode(const ECS::VSG_ComponentParams& params)
+Icon::initializeNode(const ECS::NodeComponent::Params& params)
 {
     bindCommand = BindIconStyle::create();
     bindCommand->_image = image;

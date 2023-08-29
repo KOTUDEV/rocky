@@ -6,7 +6,6 @@
 #include "LineSystem.h"
 #include "Runtime.h"
 #include "PipelineState.h"
-#include "../LineString.h" // for LineStyle
 
 #include <vsg/state/BindDescriptorSet.h>
 #include <vsg/state/ViewDependentState.h>
@@ -138,7 +137,7 @@ LineSystem::initialize(Runtime& runtime)
     }
 }
 
-int LineSystem::featureMask(const MultiLineString& c)
+int LineSystem::featureMask(const Line& c)
 {
     int mask = 0;
     if (c.write_depth) mask |= WRITE_DEPTH;
@@ -189,7 +188,7 @@ BindLineDescriptors::init(vsg::ref_ptr<vsg::PipelineLayout> layout)
 }
 
 
-LineStringGeometry::LineStringGeometry()
+LineGeometry::LineGeometry()
 {
     _drawCommand = vsg::DrawIndexed::create(
         0, // index count
@@ -201,25 +200,25 @@ LineStringGeometry::LineStringGeometry()
 }
 
 void
-LineStringGeometry::setFirst(unsigned value)
+LineGeometry::setFirst(unsigned value)
 {
     _drawCommand->firstIndex = value * 4;
 }
 
 void
-LineStringGeometry::setCount(unsigned value)
+LineGeometry::setCount(unsigned value)
 {
     _drawCommand->indexCount = value;
 }
 
 unsigned
-LineStringGeometry::numVerts() const
+LineGeometry::numVerts() const
 {
     return _current.size() / 4;
 }
 
 void
-LineStringGeometry::push_back(const vsg::vec3& value)
+LineGeometry::push_back(const vsg::vec3& value)
 {
     bool first = _current.empty();
 
@@ -253,7 +252,7 @@ LineStringGeometry::push_back(const vsg::vec3& value)
 }
 
 void
-LineStringGeometry::compile(vsg::Context& context)
+LineGeometry::compile(vsg::Context& context)
 {
     if (commands.empty())
     {

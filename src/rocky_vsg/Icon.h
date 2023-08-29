@@ -11,7 +11,7 @@
 namespace ROCKY_NAMESPACE
 {
     /**
-     * Render settings for an icon.
+     * Dynamic render settings for an icon.
      */
     struct IconStyle
     {
@@ -21,7 +21,7 @@ namespace ROCKY_NAMESPACE
     };
 
     /**
-    * Applies a style.
+    * VSG command to apply an IconStyle
     */
     class ROCKY_VSG_EXPORT BindIconStyle : public vsg::Inherit<vsg::BindDescriptorSet, BindIconStyle>
     {
@@ -35,17 +35,13 @@ namespace ROCKY_NAMESPACE
         //! Refresh the data buffer contents on the GPU
         void updateStyle(const IconStyle&);
 
-        //! Image to render to the icon
-        //void setImage(std::shared_ptr<Image> image);
-        //std::shared_ptr<Image> image() const;
-
         std::shared_ptr<Image> _image;
         vsg::ref_ptr<vsg::ubyteArray> _styleData;
         vsg::ref_ptr<vsg::Data> _imageData;
     };
 
     /**
-    * Renders an icon geometry.
+    * Command to render Icon geometry
     */
     class ROCKY_VSG_EXPORT IconGeometry : public vsg::Inherit<vsg::Geometry, IconGeometry>
     {
@@ -62,16 +58,19 @@ namespace ROCKY_NAMESPACE
     };
 
     /**
-    * Icon attachment
+    * Icon Component - an icon is a 2D billboard with a texture
+    * at a geolocation.
     */
     class ROCKY_VSG_EXPORT Icon : public ECS::NodeComponent
     {
     public:
-        //! Construct
+        //! Construct the component
         Icon();
 
+        //! Dynamic styling for the icon
         IconStyle style;
 
+        //! Image to use for the icon texture
         std::shared_ptr<Image> image;
 
         //! serialize as JSON string
@@ -82,7 +81,7 @@ namespace ROCKY_NAMESPACE
 
     public: // NodeComponent
 
-        void initializeNode(const ECS::VSG_ComponentParams&) override;
+        void initializeNode(const ECS::NodeComponent::Params&) override;
 
         int featureMask() const override;
 

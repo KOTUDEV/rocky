@@ -125,8 +125,6 @@ namespace ROCKY_NAMESPACE
         //! Optional dynamic style data
         std::optional<MeshStyle> style;
 
-    public:
-
         //! Add a triangle to the mesh
         inline void add(const Triangle32& tri);
 
@@ -142,7 +140,7 @@ namespace ROCKY_NAMESPACE
         
     public: // NodeComponent
         
-        void initializeNode(const ECS::VSG_ComponentParams&) override;
+        void initializeNode(const ECS::NodeComponent::Params&) override;
 
         int featureMask() const override;
 

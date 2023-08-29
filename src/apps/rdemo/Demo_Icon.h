@@ -35,32 +35,28 @@ auto Demo_Icon = [](Application& app)
             return;
         }
 
-        entity = app.entities().create();
-        auto& icon = app.entities().emplace<Icon>(entity);
+        entity = app.entities.create();
 
+        auto& icon = app.entities.emplace<Icon>(entity);
         icon.image = image.value;
         icon.style = IconStyle{ 75, 0.0f }; // pixel size, rotation(radians)
 
         // Transform to place the icon:
-        auto& xform = app.entities().emplace<EntityTransform>(entity);
+        auto& xform = app.entities.emplace<EntityTransform>(entity);
         xform.node->setPosition(GeoPoint(SRS::WGS84, 0, 0, 50000));
     }
 
     if (ImGuiLTable::Begin("icon"))
     {
-        auto& icon = app.entities().get<Icon>(entity);
+        auto& icon = app.entities.get<Icon>(entity);
 
-        ImGuiLTable::Checkbox("Visible", &icon.visible);
+        ImGuiLTable::Checkbox("Visible", &icon.active);
 
         if (ImGuiLTable::SliderFloat("Pixel size", &icon.style.size_pixels, 1.0f, 1024.0f))
-        {
             icon.dirty();
-        }
 
         if (ImGuiLTable::SliderFloat("Rotation", &icon.style.rotation_radians, 0.0f, 6.28f))
-        {
             icon.dirty();
-        }
 
         ImGuiLTable::End();
     }
