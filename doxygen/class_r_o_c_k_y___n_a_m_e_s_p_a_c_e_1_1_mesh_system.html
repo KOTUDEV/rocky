@@ -84,12 +84,13 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a16be37c470186bf843fe41c57b58c10f"><td class="memItemLeft" align="right" valign="top"><a id="a16be37c470186bf843fe41c57b58c10f"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Features</b> { <br />
-&#160;&#160;<b>NONE</b> = 0x0
-, <b>TEXTURE</b> = 0x1
-, <b>DYNAMIC_STYLE</b> = 0x2
-, <b>WRITE_DEPTH</b> = 0x4
+&#160;&#160;<b>NONE</b> = 0
+, <b>TEXTURE</b> = 1 &lt;&lt; 0
+, <b>DYNAMIC_STYLE</b> = 1 &lt;&lt; 1
+, <b>WRITE_DEPTH</b> = 1 &lt;&lt; 2
 , <br />
-&#160;&#160;<b>NUM_PIPELINES</b> = 8
+&#160;&#160;<b>CULL_BACKFACES</b> = 1 &lt;&lt; 3
+, <b>NUM_PIPELINES</b> = 16
 <br />
  }</td></tr>
 <tr class="separator:a16be37c470186bf843fe41c57b58c10f"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -199,9 +199,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_visible_layer.html">VisibleLayer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for a layer supporting visibility and opacity controls.  <a href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_visible_layer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_entity_transform.html">EntityTransform</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_transform.html">Transform</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_entity_motion.html">EntityMotion</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_motion.html">Motion</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_entity_motion_system.html">EntityMotionSystem</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -274,6 +274,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_bind_mesh_descriptors.html">BindMeshDescriptors</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_mesh.html">Mesh</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_pixel_scale_transform.html">PixelScaleTransform</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_sky_node.html">SkyNode</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -667,6 +669,26 @@ glm::fvec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 glm::dvec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_r_o_c_k_y___n_a_m_e_s_p_a_c_e.html#a7eba63cf158a21f421936b6748e9a3f4">operator*</a> (const glm::dmat4 &amp;mat, const glm::dvec3 &amp;v)</td></tr>
 <tr class="memdesc:a7eba63cf158a21f421936b6748e9a3f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience function to transform a 3D vector using a 4D matrix. <br /></td></tr>
 <tr class="separator:a7eba63cf158a21f421936b6748e9a3f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39184f9c76922aad75d7d1ec0b07a3a9"><td class="memTemplParams" colspan="2">template&lt;typename Q &gt; </td></tr>
+<tr class="memitem:a39184f9c76922aad75d7d1ec0b07a3a9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_r_o_c_k_y___n_a_m_e_s_p_a_c_e.html#a39184f9c76922aad75d7d1ec0b07a3a9">euler_radians_to_quaternion</a> (double xaxis, double yaxis, double zaxis, Q &amp;q)</td></tr>
+<tr class="separator:a39184f9c76922aad75d7d1ec0b07a3a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02cc34c0e9859b87885ef58911518a4e"><td class="memTemplParams" colspan="2"><a id="a02cc34c0e9859b87885ef58911518a4e"></a>
+template&lt;typename Q &gt; </td></tr>
+<tr class="memitem:a02cc34c0e9859b87885ef58911518a4e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_r_o_c_k_y___n_a_m_e_s_p_a_c_e.html#a02cc34c0e9859b87885ef58911518a4e">euler_degrees_to_quaternion</a> (double xaxis, double yaxis, double zaxis, Q &amp;q)</td></tr>
+<tr class="memdesc:a02cc34c0e9859b87885ef58911518a4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert Euler angles, in degrees, to a quaternion. <br /></td></tr>
+<tr class="separator:a02cc34c0e9859b87885ef58911518a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89cdd740925b3c257b147f1a21e110a9"><td class="memTemplParams" colspan="2">template&lt;typename Q &gt; </td></tr>
+<tr class="memitem:a89cdd740925b3c257b147f1a21e110a9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_r_o_c_k_y___n_a_m_e_s_p_a_c_e.html#a89cdd740925b3c257b147f1a21e110a9">quaternion_to_euler_radians</a> (const Q &amp;q, double &amp;xaxis, double &amp;yaxis, double &amp;zaxis)</td></tr>
+<tr class="separator:a89cdd740925b3c257b147f1a21e110a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa422e6e345de08e027955b6e99b82e82"><td class="memTemplParams" colspan="2"><a id="aa422e6e345de08e027955b6e99b82e82"></a>
+template&lt;typename Q &gt; </td></tr>
+<tr class="memitem:aa422e6e345de08e027955b6e99b82e82"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_r_o_c_k_y___n_a_m_e_s_p_a_c_e.html#aa422e6e345de08e027955b6e99b82e82">quaternion_to_euler_degrees</a> (const Q &amp;q, double &amp;xaxis, double &amp;yaxis, double &amp;zaxis)</td></tr>
+<tr class="memdesc:aa422e6e345de08e027955b6e99b82e82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a quat to Euler angles in degrees. <br /></td></tr>
+<tr class="separator:aa422e6e345de08e027955b6e99b82e82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bcf2bfc5f572bad3928730f55993b80"><td class="memTemplParams" colspan="2"><a id="a2bcf2bfc5f572bad3928730f55993b80"></a>
+template&lt;typename M , typename Q &gt; </td></tr>
+<tr class="memitem:a2bcf2bfc5f572bad3928730f55993b80"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get_rotation_from_matrix</b> (const M &amp;_mat, Q &amp;q)</td></tr>
+<tr class="separator:a2bcf2bfc5f572bad3928730f55993b80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d46f308cd0bf132de74df2fc9c37ee8"><td class="memItemLeft" align="right" valign="top"><a id="a3d46f308cd0bf132de74df2fc9c37ee8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>to_json</b> (json &amp;j, const <a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_profile.html">Profile</a> &amp;obj)</td></tr>
 <tr class="separator:a3d46f308cd0bf132de74df2fc9c37ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -822,6 +844,109 @@ constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>VSG_VIEW_DEP
 </table>
 </div><div class="memdoc">
 <p>How to interpolate points along a line segment on a geodetic map </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a39184f9c76922aad75d7d1ec0b07a3a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39184f9c76922aad75d7d1ec0b07a3a9">&#9670;&nbsp;</a></span>euler_radians_to_quaternion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Q &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ROCKY_NAMESPACE::euler_radians_to_quaternion </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>xaxis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>yaxis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>zaxis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Q &amp;&#160;</td>
+          <td class="paramname"><em>q</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Convert Euler angles, in radians, to a quaternion. <a href="https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles">https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles</a> </p>
+
+</div>
+</div>
+<a id="a89cdd740925b3c257b147f1a21e110a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89cdd740925b3c257b147f1a21e110a9">&#9670;&nbsp;</a></span>quaternion_to_euler_radians()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Q &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ROCKY_NAMESPACE::quaternion_to_euler_radians </td>
+          <td>(</td>
+          <td class="paramtype">const Q &amp;&#160;</td>
+          <td class="paramname"><em>q</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>xaxis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>yaxis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>zaxis</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Convert a quat to Euler angles in radians. <a href="https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles">https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles</a> </p>
 
 </div>
 </div>
