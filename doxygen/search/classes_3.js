@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['earthfileimporter_696',['EarthFileImporter',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_earth_file_importer.html',1,'ROCKY_NAMESPACE']]],
-  ['ecsnode_697',['ECSNode',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_e_c_s_1_1_e_c_s_node.html',1,'ROCKY_NAMESPACE::ECS']]],
+  ['earthfileimporter_697',['EarthFileImporter',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_earth_file_importer.html',1,'ROCKY_NAMESPACE']]],
   ['elevationlayer_698',['ElevationLayer',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_elevation_layer.html',1,'ROCKY_NAMESPACE']]],
   ['elevationlayervector_699',['ElevationLayerVector',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_elevation_layer_vector.html',1,'ROCKY_NAMESPACE']]],
   ['ellipsoid_700',['Ellipsoid',['../class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_ellipsoid.html',1,'ROCKY_NAMESPACE']]],
