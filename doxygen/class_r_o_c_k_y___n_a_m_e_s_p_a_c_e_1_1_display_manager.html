@@ -98,6 +98,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a05e193d14f45fd1bb56f9bf748dc4548"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2c93c2c4e71e1652426c138c5a9314c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#ac2c93c2c4e71e1652426c138c5a9314c">addWindow</a> (vsg::ref_ptr&lt; vsg::Window &gt; window, vsg::ref_ptr&lt; vsg::View &gt; view={})</td></tr>
 <tr class="separator:ac2c93c2c4e71e1652426c138c5a9314c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0391efc291a8769bdee1a6607c4d4cd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a0391efc291a8769bdee1a6607c4d4cd0">removeWindow</a> (vsg::ref_ptr&lt; vsg::Window &gt; window)</td></tr>
+<tr class="separator:a0391efc291a8769bdee1a6607c4d4cd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f0fee9b5c92ab14832c8778151ebff0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a9f0fee9b5c92ab14832c8778151ebff0">addViewToWindow</a> (vsg::ref_ptr&lt; vsg::View &gt; view, vsg::ref_ptr&lt; vsg::Window &gt; window)</td></tr>
 <tr class="separator:a9f0fee9b5c92ab14832c8778151ebff0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d4da64dfd6b01d46ba900f0f7789a53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a6d4da64dfd6b01d46ba900f0f7789a53">removeView</a> (vsg::ref_ptr&lt; vsg::View &gt; view)</td></tr>
@@ -118,6 +120,10 @@ vsg::ref_ptr&lt; vsg::RenderGraph &gt;&#160;</td><td class="memItemRight" valign
 vsg::ref_ptr&lt; vsg::Window &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a9f75b384ecab0e8e2d771bef17cc86cc">getWindow</a> (vsg::ref_ptr&lt; vsg::View &gt; view)</td></tr>
 <tr class="memdesc:a9f75b384ecab0e8e2d771bef17cc86cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the window hosting the provided view. <br /></td></tr>
 <tr class="separator:a9f75b384ecab0e8e2d771bef17cc86cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29d92f7a5c50d6a098ec3b035215f3fa"><td class="memItemLeft" align="right" valign="top"><a id="a29d92f7a5c50d6a098ec3b035215f3fa"></a>
+vsg::ref_ptr&lt; vsg::Device &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a29d92f7a5c50d6a098ec3b035215f3fa">sharedDevice</a> ()</td></tr>
+<tr class="memdesc:a29d92f7a5c50d6a098ec3b035215f3fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the vulkan device shared by all windows. <br /></td></tr>
+<tr class="separator:a29d92f7a5c50d6a098ec3b035215f3fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a506f71d245725721cd797c2411b5f909"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_o_c_k_y___n_a_m_e_s_p_a_c_e_1_1_display_manager.html#a506f71d245725721cd797c2411b5f909">compileRenderGraph</a> (vsg::ref_ptr&lt; vsg::RenderGraph &gt; renderGraph, vsg::ref_ptr&lt; vsg::Window &gt; window)</td></tr>
 <tr class="separator:a506f71d245725721cd797c2411b5f909"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -336,6 +342,25 @@ std::map&lt; vsg::ref_ptr&lt; vsg::Window &gt;, vsg::ref_ptr&lt; vsg::CommandGra
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a0391efc291a8769bdee1a6607c4d4cd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0391efc291a8769bdee1a6607c4d4cd0">&#9670;&nbsp;</a></span>removeWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DisplayManager::removeWindow </td>
+          <td>(</td>
+          <td class="paramtype">vsg::ref_ptr&lt; vsg::Window &gt;&#160;</td>
+          <td class="paramname"><em>window</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Removes a window from the display. #param window Window to remove </p>
 
 </div>
 </div>
