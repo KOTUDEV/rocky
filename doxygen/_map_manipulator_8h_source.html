@@ -397,7 +397,7 @@ $(function() {
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            <span class="keywordtype">void</span> setThrowingEnabled(<span class="keywordtype">bool</span> throwingEnabled) { _throwingEnabled = throwingEnabled; }</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            <span class="keywordtype">bool</span> getThrowingEnabled()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _throwingEnabled; }</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160; </div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            <span class="keywordtype">void</span> setThrowDecayRate(<span class="keywordtype">double</span> throwDecayRate) { _throwDecayRate = clamp(throwDecayRate, 0.0, 1.0); }</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            <span class="keywordtype">void</span> setThrowDecayRate(<span class="keywordtype">double</span> throwDecayRate) { _throwDecayRate = util::clamp(throwDecayRate, 0.0, 1.0); }</div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            <span class="keywordtype">double</span> getThrowDecayRate()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _throwDecayRate; }</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160; </div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;            <span class="keywordtype">void</span> setZoomToMouse(<span class="keywordtype">bool</span> value) { _zoomToMouse = value; }</div>
