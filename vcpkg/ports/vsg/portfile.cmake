@@ -1,9 +1,8 @@
-# vsg 1.1.2
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO vsg-dev/VulkanSceneGraph
-    REF fda6097cf37ccef7d125b6fe998c2a6ad7421f96
-    SHA512 d1f764b5d5013bfa5cf0499fda85e0e48acc998d70b5a912ad238eefbd536f09a1b94775046c06550ec663608063e84b4b8fc286125f14b2c65629863cb7f76f
+    REF "v${VERSION}"
+    SHA512 01502b0f812b3325dcb95511ea61f7c64bb476d7644f79f05b0106cf14a6442235f1d7ecb4d604b1668d99ca01db804d241dd4bbab7cad48307b03bc35cce4d1
     HEAD_REF master
 	PATCHES devendor-glslang.patch
 )

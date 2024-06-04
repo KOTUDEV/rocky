@@ -1,9 +1,17 @@
 {
   "name": "vsgimgui",
-  "version": "0.2.1",
-  "homepage": "",
-  "description": "",
+  "version": "0.3.0",
+  "description": "Library that integrates VulkanSceneGraph with Dear ImGui & ImPlot.",
+  "homepage": "https://github.com/vsg-dev/vsgImGui",
+  "license": "MIT",
   "dependencies": [
+    {
+      "name": "imgui",
+      "features": [
+        "vulkan-binding"
+      ]
+    },
+    "implot",
     {
       "name": "vcpkg-cmake",
       "host": true
